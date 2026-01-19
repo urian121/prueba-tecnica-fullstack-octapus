@@ -190,5 +190,3 @@ Alert.objects.prefetch_related("evidences")
 ✔️ Backend más rápido
 ✔️ Menos golpes a la DB
 
-Si entiendes esto, ya estás por encima del promedio 😄
-
