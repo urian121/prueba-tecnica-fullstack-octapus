@@ -22,9 +22,9 @@ const api = axios.create({
  * @param {number} params.page - Número de página
  * @returns {Promise} - Promesa con datos de alertas
  */
-export const getAlerts = async (params = {}) => {
+export const getAlerts = async (params = {}, options = {}) => {
   try {
-    const response = await api.get('/alerts/', { params });
+    const response = await api.get('/alerts/', { params, signal: options.signal });
     return response.data;
   } catch (error) {
     console.error('Error fetching alerts:', error);

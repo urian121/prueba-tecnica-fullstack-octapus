@@ -1,11 +1,20 @@
 import avatar from "/imgs/perfil-urian.jpg";
 import logo from "/imgs/logo.png";
 import HeaderSearch from "./HeaderSearch";
+import { Menu } from "lucide-react";
 
-export default function HeaderBar({ search, onSearchChange }) {
+export default function HeaderBar({ search, onSearchChange, onToggleMenu, filtersCollapsed = false }) {
   return (
     <header className="sticky top-0 z-20 bg-[#f8fafd]">
-      <div className="px-3 sm:px-6 py-3 flex items-center gap-3">
+      <div className="px-3 sm:px-4 py-3 flex items-center gap-3">
+        <button
+          type="button"
+          aria-label="Abrir menú"
+          className={`inline-flex items-center justify-center h-10 w-10 rounded-full hover:bg-gray-200 hover:cursor-pointer transition-colors ${filtersCollapsed ? 'bg-gray-200' : ''}`}
+          onClick={onToggleMenu}
+        >
+          <Menu size={25} />
+        </button>
         <span className="inline-flex items-center gap-2 text-xl font-semibold text-slate-800">
           <img src={logo} alt="Logo" className="h-8 w-auto" />
           Evidence Inbox

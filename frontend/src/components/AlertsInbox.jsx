@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAlerts } from "../services/api";
+import { Inbox } from "lucide-react";
 import AlertRow from "./AlertRow";
 import { Outlet, useMatch } from "react-router";
 import HeaderBar from "./HeaderBar";
@@ -21,6 +22,10 @@ export default function GmailInbox() {
   const [status, setStatus] = useState(null);
   const [severity, setSeverity] = useState(null);
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const isDetail = useMatch('/alerts/:id');
+  const hasData = rows.length > 0;
+  const [showFilters, setShowFilters] = useState(true);
 
   const mapAlertsToRows = (alerts) => {
     return alerts.map((a) => ({
@@ -33,30 +38,41 @@ export default function GmailInbox() {
   };
 
   useEffect(() => {
+    const t = setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, 350);
+    return () => clearTimeout(t);
+  }, [search]);
+
+  useEffect(() => {
     const fetch = async () => {
+      const controller = new AbortController();
       setLoading(true);
-      setRows([]);
       try {
         const params = {};
         if (page) params.page = page;
         if (status) params.status = status;
         if (severity) params.severity = severity;
-        if (search && search.trim().length >= 2) params.search = search.trim();
-        const data = await getAlerts(params);
+        if (debouncedSearch && debouncedSearch.length >= 2) params.search = debouncedSearch;
+        const data = await getAlerts(params, { signal: controller.signal });
         const items = Array.isArray(data?.results) ? data.results : Array.isArray(data) ? data : [];
         setRows(mapAlertsToRows(items));
         setMeta({ count: data?.count ?? items.length, next: data?.next ?? null, previous: data?.previous ?? null });
       } catch {
-        setRows([]);
-        setMeta({ count: 0, next: null, previous: null });
+        if (!controller.signal.aborted) {
+          setRows([]);
+          setMeta({ count: 0, next: null, previous: null });
+        }
       } finally {
-        await new Promise((r) => setTimeout(r, 300));
+        if (initialLoading) {
+          await new Promise((r) => setTimeout(r, 300));
+        }
         setLoading(false);
         if (initialLoading) setInitialLoading(false);
       }
     };
     fetch();
-  }, [page, status, severity, search]);
+  }, [page, status, severity, debouncedSearch, initialLoading]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -69,11 +85,13 @@ export default function GmailInbox() {
             setPage(1);
             setSearch(val);
           }}
+          onToggleMenu={() => setShowFilters((v) => !v)}
+          filtersCollapsed={!showFilters}
         />
       )}
 
       <div className="flex gap-6">
-        <aside className="shrink-0 w-64 bg-[#f8fafd] min-h-screen">
+        <aside className={`shrink-0 bg-[#f8fafd] min-h-screen overflow-hidden transition-all duration-300 ease-in-out ${showFilters ? 'w-64' : 'w-16'}`}>
           {initialLoading ? (
             <FiltroAlertsSkeleton />
           ) : (
@@ -85,18 +103,19 @@ export default function GmailInbox() {
               if (s !== undefined) setStatus(s);
               if (v !== undefined) setSeverity(v);
             }}
+            collapsed={!showFilters}
           />
           )}
         </aside>
         <section className="flex-1">
           <div className="bg-white sm:px-1 py-3 min-h-[72vh]">
-            {useMatch('/alerts/:id') ? (
+            {isDetail ? (
               <Outlet />
             ) : (
               <>
                 {initialLoading ? (
                   <AlertsHeaderSkeleton />
-                ) : (
+                ) : hasData ? (
                   <div className="px-4 sm:px-6 py-3 text-sm font-semibold text-slate-600 grid grid-cols-12">
                     <div className="col-span-5">Title</div>
                     <div className="col-span-2">Severity</div>
@@ -104,10 +123,15 @@ export default function GmailInbox() {
                     <div className="col-span-2 text-right">Created At</div>
                     <div className="col-span-1 text-right">Actions</div>
                   </div>
-                )}
+                ) : null}
                 <div className="divide-y divide-slate-200">
                   {loading ? (
                     <AlertsListSkeleton rows={10} />
+                  ) : !hasData ? (
+                    <div className="px-4 sm:px-6 min-h-[40vh] py-20 flex flex-col items-center justify-center text-center">
+                      <Inbox size={36} className="text-slate-400 mb-3" />
+                      <div className="text-slate-500">No hay data</div>
+                    </div>
                   ) : (
                     rows.map((row) => (
                       <AlertRow key={row.id} row={row} />
@@ -117,7 +141,7 @@ export default function GmailInbox() {
 
                 {loading ? (
                   <PaginationFooterSkeleton />
-                ) : (
+                ) : hasData ? (
                   <PaginationFooter
                     page={page}
                     count={meta.count}
@@ -127,7 +151,7 @@ export default function GmailInbox() {
                     onPrev={() => meta.previous && setPage((p) => Math.max(1, p - 1))}
                     onNext={() => meta.next && setPage((p) => p + 1)}
                   />
-                )}
+                ) : null}
               </>
             )}
           </div>
