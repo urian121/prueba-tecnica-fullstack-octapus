@@ -3,8 +3,7 @@ import axios from 'axios';
 
 // Crear instancia de Axios con configuración base
 const api = axios.create({
-  // baseURL: 'http://localhost:8000/api/v1',  // URL del backend Django
-  baseURL: 'https://2nzd77lz-8000.use2.devtunnels.ms/',  // URL del backend Django
+  baseURL: 'http://localhost:8000/api/v1',  // URL del backend Django
   headers: {
     'Content-Type': 'application/json',
   },
