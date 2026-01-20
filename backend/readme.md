@@ -35,7 +35,7 @@ source venv/bin/activate -> Linux/Mac
 ### 2. Instalar dependencias
 
 ```bash
-pip install django
+pip install django==5.2
 pip install djangorestframework
 pip install django-cors-headers
 pip install drf-spectacular
