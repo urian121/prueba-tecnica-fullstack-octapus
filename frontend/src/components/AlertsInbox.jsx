@@ -25,7 +25,13 @@ export default function GmailInbox() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const isDetail = useMatch('/alerts/:id');
   const hasData = rows.length > 0;
-  const [showFilters, setShowFilters] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const isDesktop = window.matchMedia('(min-width: 768px)').matches;
+      if (isDesktop) setShowFilters(true);
+    }
+  }, []);
 
   const mapAlertsToRows = (alerts) => {
     return alerts.map((a) => ({
@@ -45,8 +51,10 @@ export default function GmailInbox() {
   }, [search]);
 
   useEffect(() => {
+    const controller = new AbortController();
+    const MIN_LOADING_MS = 200;
     const fetch = async () => {
-      const controller = new AbortController();
+      const start = Date.now();
       setLoading(true);
       try {
         const params = {};
@@ -64,14 +72,17 @@ export default function GmailInbox() {
           setMeta({ count: 0, next: null, previous: null });
         }
       } finally {
-        if (initialLoading) {
-          await new Promise((r) => setTimeout(r, 300));
+        const elapsed = Date.now() - start;
+        const targetDelay = initialLoading ? Math.max(300, MIN_LOADING_MS) : MIN_LOADING_MS;
+        if (elapsed < targetDelay) {
+          await new Promise((r) => setTimeout(r, targetDelay - elapsed));
         }
         setLoading(false);
         if (initialLoading) setInitialLoading(false);
       }
     };
     fetch();
+    return () => controller.abort();
   }, [page, status, severity, debouncedSearch, initialLoading]);
 
   return (
@@ -91,7 +102,10 @@ export default function GmailInbox() {
       )}
 
       <div className="flex gap-6">
-        <aside className={`shrink-0 bg-[#f8fafd] min-h-screen overflow-hidden transition-all duration-300 ease-in-out ${showFilters ? 'w-64' : 'w-16'}`}>
+        {showFilters ? (
+          <div className="fixed left-0 top-[56px] h-[calc(100vh-56px)] right-0 bg-black/20 z-20 md:hidden" onClick={() => setShowFilters(false)} />
+        ) : null}
+        <aside className={`block md:block fixed md:static left-0 top-[56px] md:top-0 z-30 h-[calc(100vh-56px)] md:min-h-screen shrink-0 bg-[#f8fafd] overflow-hidden transform transition-all duration-200 ease-out w-64 ${showFilters ? 'translate-x-0 md:w-64' : '-translate-x-full md:translate-x-0 md:w-16'}`}>
           {initialLoading ? (
             <FiltroAlertsSkeleton />
           ) : (

@@ -1,7 +1,7 @@
 export default function HeaderBarSkeleton() {
   return (
     <header className="sticky top-0 z-20 bg-[#f8fafd]">
-      <div className="px-3 sm:px-6 py-3 flex items-center gap-3">
+      <div className="px-3 sm:px-2 py-3 flex items-center gap-3">
         <div className="h-5 w-32 bg-slate-200 rounded animate-pulse" />
         <div className="ml-23 flex-1">
           <div className="h-10 bg-slate-200 rounded-full animate-pulse max-w-[560px] sm:max-w-[680px]" />

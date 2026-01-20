@@ -1,4 +1,5 @@
 from rest_framework import generics, status
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
@@ -36,8 +37,14 @@ class AlertDetailAPIView(generics.RetrieveAPIView):
 
 
 # GET /api/v1/alerts/<id>/evidences/
+class EvidencePagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+
 class AlertEvidencesAPIView(generics.ListAPIView):
     serializer_class = EvidenceSerializer
+    pagination_class = EvidencePagination
 
     def get_queryset(self):
         return (

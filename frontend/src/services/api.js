@@ -55,13 +55,14 @@ export const getAlertById = async (id) => {
  * Obtener evidencias de una alerta específica
  * @param {number} alertId - ID de la alerta
  * @param {number} page - Número de página
+ * @param {number} page_size - Tamaño de página (opcional)
  * @returns {Promise} - Promesa con datos de evidencias
  */
-export const getAlertEvidences = async (alertId, page = 1) => {
+export const getAlertEvidences = async (alertId, page = 1, page_size) => {
   try {
-    const response = await api.get(`/alerts/${alertId}/evidences/`, {
-      params: { page }
-    });
+    const params = { page };
+    if (typeof page_size === 'number') params.page_size = page_size;
+    const response = await api.get(`/alerts/${alertId}/evidences/`, { params });
     return response.data;
   } catch (error) {
     console.error('Error fetching evidences:', error);

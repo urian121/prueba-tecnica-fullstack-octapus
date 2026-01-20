@@ -6,20 +6,20 @@ import { Menu } from "lucide-react";
 export default function HeaderBar({ search, onSearchChange, onToggleMenu, filtersCollapsed = false }) {
   return (
     <header className="sticky top-0 z-20 bg-[#f8fafd]">
-      <div className="px-3 sm:px-4 py-3 flex items-center gap-3">
+      <div className="px-3 sm:px-2 py-3 flex items-center gap-3">
         <button
           type="button"
           aria-label="Abrir menú"
-          className={`inline-flex items-center justify-center h-10 w-10 rounded-full hover:bg-gray-200 hover:cursor-pointer transition-colors ${filtersCollapsed ? 'bg-gray-200' : ''}`}
+          className={`inline-flex items-center justify-center h-11 w-11 rounded-full hover:bg-gray-200 hover:cursor-pointer transition-colors ${filtersCollapsed ? 'bg-gray-200' : ''}`}
           onClick={onToggleMenu}
         >
           <Menu size={25} />
         </button>
-        <span className="inline-flex items-center gap-2 text-xl font-semibold text-slate-800">
+        <span className="inline-flex items-center gap-2 text-sm sm:text-lg md:text-xl font-semibold text-slate-800">
           <img src={logo} alt="Logo" className="h-8 w-auto" />
           Evidence Inbox
         </span>
-        <div className="ml-10 flex-1">
+        <div className="ml-5 flex-1">
           <HeaderSearch value={search} onChange={(e) => onSearchChange?.(e.target.value)} placeholder="Buscar alertas por título" />
         </div>
         <div className="h-9 w-9 rounded-full overflow-hidden ring-2 ring-slate-200">

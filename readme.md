@@ -14,7 +14,7 @@ Este proyecto contiene dos aplicaciones:
 - Setup rápido:
   - Crear entorno e instalar dependencias: `python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt`
   - Migraciones: `python manage.py migrate`
-  - Seed de datos (30 alertas + evidencias): `python manage.py seed_alerts`
+  - Seed de datos (40 alertas + evidencias): `python manage.py seed_alerts`
   - Servidor: `python manage.py runserver` (http://localhost:8000)
 
 ## Frontend

@@ -20,7 +20,7 @@ class Command(BaseCommand):
 
         Alert.objects.all().delete()
 
-        alerts_count = 30
+        alerts_count = 40
 
         for _ in range(alerts_count):
             alert = Alert.objects.create(
@@ -30,7 +30,6 @@ class Command(BaseCommand):
             )
 
             evidences_count = random.randint(5, 15)
-
             evidences = [
                 Evidence(
                     alert=alert,
