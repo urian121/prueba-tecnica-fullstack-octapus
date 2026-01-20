@@ -5,7 +5,6 @@ import axios from 'axios';
 const api = axios.create({
   // baseURL: 'http://localhost:8000/api/v1',  // URL del backend Django
   baseURL: 'https://2nzd77lz-8000.use2.devtunnels.ms/',  // URL del backend Django
-  https://2nzd77lz-8000.use2.devtunnels.ms/
   headers: {
     'Content-Type': 'application/json',
   },
