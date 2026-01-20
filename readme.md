@@ -1,6 +1,6 @@
-# Octapus – Prueba Técnica (fullstack)
+# Evidence Inbox – Prueba Técnica (Fullstack)
 
-Evidence Inbox es una app fullstack: Django + DRF (API) y React + Vite (UI).
+**Evidence Inbox** es una app fullstack: Django + DRF (API) y React + Vite (UI).
 Arquitectura REST desacoplada: el frontend consume JSON del backend con CORS.
 Listado paginado con filtros por severidad/estado y búsqueda con debounce.
 Detalle incrustado y toggle de Reviewed (optimistic update) sobre evidencias.
