@@ -1,10 +1,9 @@
-# Prueba Técnica Fullstack – Octapus
+# API con Django + DRF
 
-Mini funcionalidad **Evidence Inbox** construida con **Django + DRF** (backend) y **React** (frontend).
-La arquitectura es REST desacoplada, el frontend consume APIs JSON del backend.
-
-
-## Stack
+API REST para Evidence Inbox (alerts/evidences) construida con Django + DRF.
+Lista alertas con filtros (severity, status), búsqueda y paginación; incluye detalle y evidencias.
+Actualización de evidencias vía PATCH /api/v1/evidences/:id/ (is_reviewed, requiere slash final).
+Respuestas JSON con CORS habilitado; consultas optimizadas evitando N+1.
 
 ### Backend
 
@@ -16,7 +15,11 @@ La arquitectura es REST desacoplada, el frontend consume APIs JSON del backend.
 
 ### Frontend
 
-* React 18
+* React 19
+* Vite
+* Tailwind v4
+* react-router v7
+* lucide-react
 
 
 ## 🚀 Backend – Instalación y ejecución
@@ -39,7 +42,6 @@ pip install drf-spectacular
 pip install faker
 ```
 
-
 ### 3. Migraciones
 
 ```bash
@@ -51,7 +53,7 @@ python manage.py migrate
 
 Genera:
 
-* 20–30 alertas
+* 20–40 alertas
 * 5–15 evidencias por alerta
 * severities, status y sources mezclados
 
@@ -70,7 +72,6 @@ Backend disponible en:
 ```
 http://127.0.0.1:8000
 ```
-
 
 ## 6. API Docs (Swagger)
 
@@ -101,32 +102,3 @@ http://127.0.0.1:8000/api/docs/
 ### Evidences
 
 * `PATCH /api/v1/evidences/<id>/`
-
-  * body:
-
-    ```json
-    {
-      "is_reviewed": true
-    }
-    ```
-
-## ⚠️ Notas importantes
-* Se evita N+1 queries usando `select_related`
-* Manejo correcto de errores HTTP (400 / 404)
-* Paginación activa por defecto
-
-
-## 🐞 Debug / Bug Fix
-
-La solución incluye fixes para:
-
-* Loop infinito en React por mal uso de `useEffect`
-* Error por endpoint sin slash final (`/`)
-* Optimización backend para evitar N+1 queries
-
-## Estado del proyecto
-
-* Backend completo y funcional
-* Seed de datos realista
-* API documentada
-* Listo para consumo desde React

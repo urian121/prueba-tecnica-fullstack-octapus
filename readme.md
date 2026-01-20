@@ -1,8 +1,13 @@
 # Octapus – Prueba Técnica (fullstack)
 
-Este proyecto contiene dos aplicaciones:
-- backend/ (Django + DRF)
-- frontend/ (React + Vite + Tailwind)
+Evidence Inbox es una app fullstack: Django + DRF (API) y React + Vite (UI).
+Arquitectura REST desacoplada: el frontend consume JSON del backend con CORS.
+Listado paginado con filtros por severidad/estado y búsqueda con debounce.
+Detalle incrustado y toggle de Reviewed (optimistic update) sobre evidencias.
+
+![Demo](./docs/preview-1.png)
+![Demo](./docs/preview-2.png)
+![Demo](./docs/preview-3.png)
 
 ## Backend
 - Stack: Django, Django REST Framework
@@ -22,8 +27,8 @@ Este proyecto contiene dos aplicaciones:
 - API base: `http://localhost:8000/api/v1`
 - Comandos:
   - Instalar: `npm install`
-  - Desarrollo: `npm run dev` (http://localhost:5174)
-  - Lint: `npm run lint`
+  - Desarrollo: `npm run dev` (http://localhost:5173)
+
 - Funcionalidad:
   - Listado con filtros por severidad/estado y búsqueda por título (mín. 2 caracteres)
   - Columna “Actions” con enlace “View” para abrir el detalle
@@ -34,16 +39,25 @@ Este proyecto contiene dos aplicaciones:
   - Detalle: `/alerts/:id` (como ruta hija del layout)
   - Import recomendado: `BrowserRouter` desde `react-router-dom`; `Routes/Route/Link/Outlet` desde `react-router`
 
-## Notas
-- Mantener las URLs del backend con “/” final (especialmente en `PATCH /evidences/{id}/`).
-- El repositorio Git debe inicializarse en la raíz: `prueba-tecnica-octapus/` para versionar backend y frontend juntos.
-- .gitignore existen en ambos subproyectos; se puede añadir uno raíz para reglas comunes.
-
-## Estructura
-- backend/: Django project y app `alerts`
-- frontend/: Vite + React, componentes en `src/components`, servicios en `src/services/api.js`
 
 ## Desarrollo
-1. Levantar backend en `http://localhost:8000`
-2. Levantar frontend en `http://localhost:5174`
-3. Usar el enlace “View” en la tabla para abrir el detalle incrustado
+Backend (Django + DRF):
+
+```bash
+cd backend
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py seed_alerts
+python manage.py runserver  # http://localhost:8000
+```
+
+Frontend (React + Vite):
+
+```bash
+cd frontend
+npm install
+npm run dev  # http://localhost:5173 (o el puerto que muestre Vite)
+```
+
+- Asegúrate de tener el backend corriendo en http://localhost:8000; el frontend usa base `http://localhost:8000/api/v1` ya configurada en `src/services/api.js`.

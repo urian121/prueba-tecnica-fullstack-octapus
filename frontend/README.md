@@ -1,6 +1,7 @@
-# Frontend – Evidence Inbox (React)
+# Evidence Inbox – Frontend (React + Vite)
 
-Aplicación de interfaz para listar alertas, filtrarlas y ver su detalle incrustado (estilo Gmail).
+UI moderna para listar y filtrar alertas con paginación y búsqueda con debounce.
+Detalle incrustado estilo Gmail; integra con API Django/DRF, Tailwind v4 y React Router v7.
 
 ## Stack
 - React 19 + Vite
@@ -27,14 +28,6 @@ Aplicación de interfaz para listar alertas, filtrarlas y ver su detalle incrust
 - Columna "Actions" con enlace "View" para abrir detalle
 - Toggle de "Reviewed" en evidencias (actualiza backend)
 
-## Estructura
-- `src/components/AlertsInbox.jsx` Layout y lista con filtros y paginación
-- `src/components/AlertDetail.jsx` Detalle incrustado con evidencias
-- `src/components/AlertRow.jsx` Fila de tabla (incluye enlace a detalle)
-- `src/components/skeleton/*` Placeholders de carga
-- `src/services/api.js` Llamadas al backend
-- `src/utils/badges.js` Clases de estilo para badges
-- `src/App.jsx` Configuración de rutas
 
 ## Puesta en marcha
 1. Levanta el backend en `http://localhost:8000`
