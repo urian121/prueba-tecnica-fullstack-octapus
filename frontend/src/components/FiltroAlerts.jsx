@@ -1,12 +1,14 @@
-import { useState } from "react";
+import useFiltroActive from "../hooks/useFiltroActive";
 import { Filter, AlertTriangle, TrendingUp, MinusCircle, TrendingDown, Menu, LockOpen, Loader, CheckCircle } from "lucide-react";
 const itemBase = "w-full flex items-center gap-2 px-3 py-2.5 rounded-full text-sm hover:bg-slate-100 hover:cursor-pointer transition-colors";
 
 function FiltroItem({ label, active, onClick, Icon, collapsed }) {
+  // Determina clases según modo: colapsado (solo ícono) o expandido (ícono + texto)
   const base = collapsed
     ? "w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-100 hover:cursor-pointer transition-colors"
     : itemBase;
   return (
+    // Botón accesible con aria-label; resalta si está activo
     <button onClick={onClick} title={label} aria-label={label} className={`${base} ${active ? "bg-[#c2e7ff]" : ""}`}>
       {Icon ? <Icon size={collapsed ? 18 : 16} className="text-slate-600" /> : null}
       {collapsed ? null : <span className={`truncate ${active ? 'font-semibold' : ''}`}>{label}</span>}
@@ -15,14 +17,7 @@ function FiltroItem({ label, active, onClick, Icon, collapsed }) {
 }
 
 export default function FiltroAlerts({ status, severity, onChange, collapsed = false }) {
-  const [activeGroup, setActiveGroup] = useState("severity");
-  const isActive = (type, value) => {
-    if (type === "severity_all") return severity === null && activeGroup === "severity";
-    if (type === "status_all") return status === null && activeGroup === "status";
-    if (type === "severity") return severity === value;
-    if (type === "status") return status === value;
-    return false;
-  };
+  const { setActiveGroup, isActive } = useFiltroActive({ status, severity });
 
   return (
     <div className={collapsed ? "py-2 flex flex-col items-center gap-2" : "p-2"}>

@@ -1,100 +1,17 @@
-import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, CheckCircle, Circle, Twitter, Linkedin, Instagram, Globe, Bot } from 'lucide-react';
-import { getAlertById, getAlertEvidences, updateEvidenceReview } from '../services/api';
+import useAlertDetail from '../hooks/useAlertDetail';
+import { formatDate } from '../utils/date';
+import { getStatusClasses, getSeverityFilledClasses } from '../utils/badges';
 import PaginationFooter from './PaginationFooter';
 import PaginationFooterSkeleton from './skeleton/PaginationFooterSkeleton';
 import AlertDetailSkeleton from './skeleton/AlertDetailSkeleton';
 
 export default function AlertDetail() {
   const { id } = useParams();
-  const [alert, setAlert] = useState(null);
-  const [evidences, setEvidences] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [evLoading, setEvLoading] = useState(false);
-  const [evPage, setEvPage] = useState(1);
-  const [evMeta, setEvMeta] = useState({ count: 0, next: null, previous: null });
-  const PAGE_SIZE = 5;
-  const formatDate = (v) => {
-    try {
-      return new Date(v).toLocaleString("es-ES", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
-    } catch {
-      return v ?? "";
-    }
-  };
+  const { alert, evidences, loading, evLoading, evPage, evMeta, pageSize, setEvPage, toggleReviewed } = useAlertDetail(id, 5);
 
-  useEffect(() => {
-    const fetch = async () => {
-      const MIN_LOADING_MS = 350;
-      const start = Date.now();
-      setLoading(true);
-      try {
-        const detail = await getAlertById(id);
-        setAlert(detail);
-        const ev = await getAlertEvidences(id, 1, PAGE_SIZE);
-        const items = Array.isArray(ev?.results) ? ev.results : Array.isArray(ev) ? ev : [];
-        setEvidences(items);
-        setEvMeta({ count: ev?.count ?? items.length, next: ev?.next ?? null, previous: ev?.previous ?? null });
-        setEvPage(1);
-      } catch {
-        setAlert(null);
-        setEvidences([]);
-        setEvMeta({ count: 0, next: null, previous: null });
-        setEvPage(1);
-      } finally {
-        const elapsed = Date.now() - start;
-        if (elapsed < MIN_LOADING_MS) {
-          await new Promise((r) => setTimeout(r, MIN_LOADING_MS - elapsed));
-        }
-        setLoading(false);
-      }
-    };
-    fetch();
-  }, [id]);
-
-  useEffect(() => {
-    const fetchEvidences = async () => {
-      const MIN_LOADING_MS = 250;
-      const start = Date.now();
-      setEvLoading(true);
-      try {
-        const ev = await getAlertEvidences(id, evPage, PAGE_SIZE);
-        const items = Array.isArray(ev?.results) ? ev.results : Array.isArray(ev) ? ev : [];
-        setEvidences(items);
-        setEvMeta({ count: ev?.count ?? evMeta.count, next: ev?.next ?? null, previous: ev?.previous ?? null });
-      } catch {
-        setEvidences([]);
-        setEvMeta({ count: 0, next: null, previous: null });
-      } finally {
-        const elapsed = Date.now() - start;
-        if (elapsed < MIN_LOADING_MS) {
-          await new Promise((r) => setTimeout(r, MIN_LOADING_MS - elapsed));
-        }
-        setEvLoading(false);
-      }
-    };
-    if (!loading && id) fetchEvidences();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [evPage]);
-
-  const getSeverityColor = (severity) => {
-    switch(severity) {
-      case 'critical': return 'bg-red-500';
-      case 'high': return 'bg-orange-500';
-      case 'medium': return 'bg-yellow-500';
-      case 'low': return 'bg-blue-500';
-      default: return 'bg-gray-500';
-    }
-  };
-
-  const getStatusColor = (status) => {
-    switch(status) {
-      case 'open': return 'bg-green-100 text-green-800';
-      case 'in_progress': return 'bg-purple-100 text-purple-800';
-      case 'closed': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
+  const getStatusColor = (status) => getStatusClasses(status);
 
   const getSourceIcon = (source) => {
     switch(source) {
@@ -107,17 +24,6 @@ export default function AlertDetail() {
     }
   };
 
-  const toggleReviewed = async (evidenceId) => {
-    const current = evidences.find(e => e.id === evidenceId);
-    if (!current) return;
-    const next = !current.is_reviewed;
-    setEvidences(evidences.map(e => e.id === evidenceId ? { ...e, is_reviewed: next } : e));
-    try {
-      await updateEvidenceReview(evidenceId, next);
-    } catch {
-      setEvidences(evidences.map(e => e.id === evidenceId ? { ...e, is_reviewed: !next } : e));
-    }
-  };
 
   if (loading) return <AlertDetailSkeleton />;
   return (
@@ -129,7 +35,7 @@ export default function AlertDetail() {
         </Link>
         <div className="flex items-center gap-2 text-xs">
           <span className={`px-2.5 py-1 rounded-full ${getStatusColor(alert?.status)}`}>{alert?.status?.replace('_', ' ').toUpperCase()}</span>
-          <span className={`px-2.5 py-1 rounded-full text-white ${getSeverityColor(alert?.severity)}`}>{alert?.severity?.toUpperCase()}</span>
+          <span className={`px-2.5 py-1 rounded-full text-white ${getSeverityFilledClasses(alert?.severity)}`}>{alert?.severity?.toUpperCase()}</span>
         </div>
       </div>
 
@@ -144,7 +50,7 @@ export default function AlertDetail() {
 
       <div className="divide-y divide-slate-200">
         {evLoading ? (
-          Array.from({ length: PAGE_SIZE }).map((_, i) => (
+          Array.from({ length: pageSize }).map((_, i) => (
             <div key={i} className="px-4 sm:px-6 py-4">
               <div className="flex items-start gap-4 text-sm">
                 <div className="mt-1 h-5 w-5 rounded-full bg-slate-200 animate-pulse" />
@@ -173,7 +79,7 @@ export default function AlertDetail() {
                   <Circle className="text-slate-300 hover:text-slate-400" size={18} />
                 )}
               </button>
-              <div className="flex-1">
+                <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2 text-sm">
                   {getSourceIcon(evidence.source)}
                   <span className="font-semibold text-slate-700 capitalize">{evidence.source}</span>
@@ -202,7 +108,7 @@ export default function AlertDetail() {
         <PaginationFooter
           page={evPage}
           count={evMeta.count}
-          pageSize={PAGE_SIZE}
+          pageSize={pageSize}
           hasPrev={Boolean(evMeta.previous)}
           hasNext={Boolean(evMeta.next)}
           onPrev={() => evMeta.previous && setEvPage((p) => Math.max(1, p - 1))}

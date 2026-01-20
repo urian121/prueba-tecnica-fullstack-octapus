@@ -27,7 +27,9 @@ export const getAlerts = async (params = {}, options = {}) => {
     const response = await api.get('/alerts/', { params, signal: options.signal });
     return response.data;
   } catch (error) {
-    console.error('Error fetching alerts:', error);
+    if (error?.code !== 'ERR_CANCELED' && error?.name !== 'CanceledError' && error?.message !== 'canceled') {
+      console.error('Error fetching alerts:', error);
+    }
     throw error;
   }
 };

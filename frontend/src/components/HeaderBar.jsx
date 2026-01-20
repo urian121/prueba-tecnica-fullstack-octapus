@@ -16,7 +16,9 @@ export default function HeaderBar({ search, onSearchChange, onToggleMenu, filter
           <Menu size={25} />
         </button>
         <span className="inline-flex items-center gap-2 text-sm sm:text-lg md:text-xl font-semibold text-slate-800">
-          <img src={logo} alt="Logo" className="h-8 w-auto" />
+          <a href="/" className="block h-8 w-auto">
+            <img src={logo} alt="Logo" className="h-8 w-auto" />
+          </a>
           Evidence Inbox
         </span>
         <div className="ml-5 flex-1">
