@@ -73,30 +73,32 @@ export default function GmailInbox() {
               <Outlet />
             ) : (
               <>
-                {initialLoading ? (
-                  <AlertsHeaderSkeleton />
-                ) : hasData ? (
-                  <div className="px-4 sm:px-6 py-3 text-sm font-semibold text-slate-600 grid grid-cols-12">
-                    <div className="col-span-5">Title</div>
-                    <div className="col-span-2">Severity</div>
-                    <div className="col-span-2">Status</div>
-                    <div className="col-span-2 text-right">Created At</div>
-                    <div className="col-span-1 text-right">Actions</div>
-                  </div>
-                ) : null}
-                <div className="divide-y divide-slate-200">
-                  {loading ? (
-                    <AlertsListSkeleton rows={10} />
-                  ) : !hasData ? (
-                    <div className="px-4 sm:px-6 min-h-[40vh] py-20 flex flex-col items-center justify-center text-center">
-                      <Inbox size={36} className="text-slate-400 mb-3" />
-                      <div className="text-slate-500">No hay data</div>
+                <div className="overflow-x-auto md:overflow-x-visible">
+                  {initialLoading ? (
+                    <AlertsHeaderSkeleton />
+                  ) : hasData ? (
+                    <div className="px-4 sm:px-6 py-3 text-sm font-semibold text-slate-600 grid grid-cols-12 min-w-[640px] md:min-w-0">
+                      <div className="col-span-5 min-w-[200px]">Title</div>
+                      <div className="col-span-2 min-w-[100px]">Severity</div>
+                      <div className="col-span-2 min-w-[100px]">Status</div>
+                      <div className="col-span-2 text-right min-w-[120px]">Created At</div>
+                      <div className="col-span-1 text-right min-w-[80px]">Actions</div>
                     </div>
-                  ) : (
-                    rows.map((row) => (
-                      <AlertRow key={row.id} row={row} />
-                    ))
-                  )}
+                  ) : null}
+                  <div className="divide-y divide-slate-200 min-w-[640px] md:min-w-0">
+                    {loading ? (
+                      <AlertsListSkeleton rows={10} />
+                    ) : !hasData ? (
+                      <div className="px-4 sm:px-6 min-h-[40vh] py-20 flex flex-col items-center justify-center text-center min-w-0">
+                        <Inbox size={36} className="text-slate-400 mb-3" />
+                        <div className="text-slate-500">No hay data</div>
+                      </div>
+                    ) : (
+                      rows.map((row) => (
+                        <AlertRow key={row.id} row={row} />
+                      ))
+                    )}
+                  </div>
                 </div>
 
                 {loading ? (

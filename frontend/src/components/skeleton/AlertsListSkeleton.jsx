@@ -3,21 +3,21 @@ export default function AlertsListSkeleton({ rows = 10 }) {
   return (
     <div className="animate-pulse">
       {items.map((_, i) => (
-        <div key={i} className="px-4 sm:px-6 py-4">
+        <div key={i} className="px-4 sm:px-6 py-4 min-w-[640px] md:min-w-0">
           <div className="grid grid-cols-12 items-center gap-4">
-            <div className="col-span-5">
+            <div className="col-span-5 min-w-[200px]">
               <div className="h-4 bg-slate-200 rounded w-3/5" />
             </div>
-            <div className="col-span-2">
+            <div className="col-span-2 min-w-[100px]">
               <div className="h-5 bg-slate-200 rounded-full w-12" />
             </div>
-            <div className="col-span-2">
+            <div className="col-span-2 min-w-[100px]">
               <div className="h-5 bg-slate-200 rounded-full w-20" />
             </div>
-            <div className="col-span-2 text-right">
+            <div className="col-span-2 text-right min-w-[120px]">
               <div className="ml-auto h-4 bg-slate-200 rounded w-16" />
             </div>
-            <div className="col-span-1 text-right">
+            <div className="col-span-1 text-right min-w-[80px]">
               <div className="ml-auto h-4 bg-slate-200 rounded w-8" />
             </div>
           </div>
